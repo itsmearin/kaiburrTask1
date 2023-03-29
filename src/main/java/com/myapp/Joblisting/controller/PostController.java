@@ -1,43 +1,51 @@
+package com.telusko.joblisting.controller;
 
-package com.myapp.Joblisting.controller;
-
-import com.myapp.Joblisting.repository.Postrepository;
-import com.myapp.Joblisting.model.Post;
+import com.telusko.joblisting.repository.PostRepository;
+import com.telusko.joblisting.model.Post;
+import com.telusko.joblisting.repository.SearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.io.IOException;
-import java.util.Optional;
+import java.util.List;
 
 @RestController
-public class PostController {
+@CrossOrigin(origins = "http://localhost:3000")
+public class PostController
+{
+
     @Autowired
-    Postrepository repo;
+    PostRepository repo;
+
+    @Autowired
+    SearchRepository srepo;
+
+    @ApiIgnore
     @RequestMapping(value="/")
-    public void redirect(HttpServletResponse response) throws IOException
-    {
+    public void redirect(HttpServletResponse response) throws IOException {
         response.sendRedirect("/swagger-ui.html");
     }
-    @GetMapping("/posts")
 
+    @GetMapping("/allPosts")
+    @CrossOrigin
     public List<Post> getAllPosts()
     {
         return repo.findAll();
     }
+    // posts/java
     @GetMapping("/posts/{text}")
-
-    public Optional<Post> search(@PathVariable String text)
+    @CrossOrigin
+    public List<Post> search(@PathVariable String text)
     {
-        return repo.findById(text);
+        return srepo.findByText(text);
     }
-    @PostMapping("/post")
 
+    @PostMapping("/post")
+    @CrossOrigin
     public Post addPost(@RequestBody Post post)
     {
-         return repo.save(post);
+        return repo.save(post);
     }
-
 }
